@@ -1,32 +1,25 @@
 <template>
   <div class="hello">
     <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+
+    <section>
+      <h2>Produtos</h2>
+      <ul class="product-list">
+        <li v-for="product in products" :key="product.id">
+          <strong>{{ product.name }}</strong>
+          <span>R$ {{ product.price.toFixed(2) }}</span>
+          <button @click="addToCart(product)">Adicionar ao carrinho</button>
+        </li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Carrinho ({{ cartItemCount }})</h2>
+      <ul class="cart-list">
+        <li v-if="cart.length === 0">O carrinho está vazio.</li>
+        <li v-for="(item, index) in cart" :key="index">{{ item.name }} - R$ {{ item.price.toFixed(2) }}</li>
+      </ul>
+    </section>
   </div>
 </template>
 
@@ -35,24 +28,65 @@ export default {
   name: 'HelloWorld',
   props: {
     msg: String
+  },
+  data() {
+    return {
+      products: [
+        { id: 1, name: 'Produto A', price: 19.90 },
+        { id: 2, name: 'Produto B', price: 29.90 },
+        { id: 3, name: 'Produto C', price: 39.90 }
+      ]
+    }
+  },
+  computed: {
+    cart() {
+      return this.$store.state.cart
+    },
+    cartItemCount() {
+      return this.$store.getters.cartItemCount
+    }
+  },
+  methods: {
+    addToCart(product) {
+      this.$store.dispatch('addToCart', product)
+    }
   }
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h3 {
-  margin: 40px 0 0;
+.hello {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 20px;
 }
-ul {
-  list-style-type: none;
+section {
+  margin-bottom: 24px;
+}
+.product-list,
+.cart-list {
+  list-style: none;
   padding: 0;
 }
-li {
-  display: inline-block;
-  margin: 0 10px;
+.product-list li,
+.cart-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f8f8f8;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 6px;
 }
-a {
-  color: #42b983;
+.product-list button {
+  padding: 6px 10px;
+  border: none;
+  background: #42b983;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.product-list button:hover {
+  background: #2c8f6c;
 }
 </style>
